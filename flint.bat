@@ -10,5 +10,5 @@ REM       project/docs -> project/docs.html
 REM  -d   directory       (recurrsive)
 REM  -md  merge directory (recurrsive)
 
-python <absolute path to -> FLint\flint.py> -md \ 
+python <absolute path to -> FLint\flint.py> -md ^
  "<absolute path to input>" "<absolute path to output>/docs"

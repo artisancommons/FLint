@@ -1,8 +1,12 @@
 
 
 def read_file(path):
-    with open(path, 'r') as fd:
-        return fd.readlines()
+    try:
+        with open(path, 'r') as fd:
+            return fd.readlines()
+    except:
+        print(f"failed to read: {path}")
+        return [f"Failed to read: {path}"]
 
 def list_to_string(li):
     s = ""

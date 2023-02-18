@@ -8,6 +8,7 @@
 - Change the settings in flint.bat
 - Add or remove file/directory paths in .flint-ignore
 - Document your code and run flint.bat
+- Please read instructions in flint.bat
 
 ## Document with Doc-Blocks
 ### C, C++, C#, Java, Rust
