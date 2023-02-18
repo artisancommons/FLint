@@ -1,0 +1,15 @@
+.flint-ignore
+.gitignore
+.git
+.expo
+node_modules
+assets
+docs
+flint.bat
+eas.json
+package-lock.json
+package.json
+babel.config.js
+app.json
+tsconfig.json
+components/__tests__
