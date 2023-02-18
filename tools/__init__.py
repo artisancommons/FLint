@@ -1,6 +1,8 @@
 
 from os import listdir
 from os.path import isdir as path_isdir
+from os.path import exists as dir_exists
+from os import mkdir
 
 from .util import (
     list_to_string,
@@ -296,6 +298,18 @@ def write_file(outputPath, data):
             # write single file of all content
             fd.write(make_pretty(list_to_string(data)))
 
+
+def fix_path(path):
+    newPath = ""
+    pathSplit = path.split('/')
+    for i in pathSplit[:-1]:
+        newPath += i + '/'
+    return newPath[:-1]
+
+def force_make_dir(path):
+    if not dir_exists(path):
+        mkdir(path)
+
 # main entry
 def do_lint(lintType, ioArgs, lintIgnore):
     # create linter instance and run lint method
@@ -307,9 +321,11 @@ def do_lint(lintType, ioArgs, lintIgnore):
     doesMerge = lintType == LINT_TYPE_MDIR
     # dump parsed contents into a single file 
     if doesMerge:
+        force_make_dir(fix_path(outputPath))
         write_file(f'{outputPath}.html', result)
 
     # dump parsed contents into files specified by block names
     else:
         for group in result:
+            force_make_dir(fix_path(f'{outputPath}/{group}'))
             write_file(f'{outputPath}/{group}.html', result[group])
