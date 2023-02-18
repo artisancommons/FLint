@@ -4,8 +4,8 @@ def read_file(path):
     try:
         with open(path, 'r') as fd:
             return fd.readlines()
-    except:
-        print(f"failed to read: {path}")
+    except UnicodeDecodeError as e:
+        print(f"failed to read: {path}\n - err: {e}")
         return [f"Failed to read: {path}"]
 
 def list_to_string(li):
