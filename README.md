@@ -18,3 +18,7 @@
 - Start and Close a Doc-Block with #>>
 ### Non-Programming
 - Can also be used for plain text files.
+#### Custom Styling
+- Following a Doc-Block Start:
+-  Add 'space-separated' styles
+- ex. //>> BlockName .view .container .etc 

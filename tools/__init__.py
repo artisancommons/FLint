@@ -111,7 +111,7 @@ def parse_content(content):
 
 # read and parse a single file, into a block map
 def lint_file(filePath):
-    print(f"processing file {filePath}")
+    print(f" -- processing file {filePath}")
     content = read_file(filePath)
     result = parse_content(content)
     return result
@@ -151,7 +151,7 @@ def ignore_current_path(currentLocalPath, lintIgnore):
 
 # recurrsively lint directories
 def lint_dir(targetRoot, lintIgnore, dirPath):
-    print(f"processing directory {dirPath}")
+    print(f"-\n processing directory {dirPath}")
     
     # early return for ignored path
     isIgnoredPathResult = is_ignored_path(targetRoot, dirPath, lintIgnore)
@@ -210,6 +210,8 @@ def lint_dir(targetRoot, lintIgnore, dirPath):
             # close div tag
             resultGroups[group].append("</div>\n")
     
+    print('-')
+    print('')  # console output spacing
     return resultGroups
 # ------------ #
 
