@@ -13,6 +13,9 @@ TOKEN_HASH         = "#>>"
 TOKEN_DOUBLE_SLASH = "//>>"
 TOKEN_MULTI_START  = "/*>>"
 TOKEN_MULTI_STOP   = "<<*/"
+
+A_LEFT_ANGLE = '&#60'
+A_RIGHT_ANGLE = '&#62'
 # ------------- #
 
 # lint types #
@@ -104,7 +107,7 @@ def parse_content(content):
 
         # doc block accumulation
         if inBlock:
-            result += line
+            result += line.replace('<', A_LEFT_ANGLE).replace('>', A_RIGHT_ANGLE)
     
     # groups of result data, based on blockName
     return resultGroups
@@ -262,6 +265,9 @@ def make_pretty(content):
             stepsIn += 1
             closerFound = False
 
+        # escapes everything
+        #line = line.replace('<', A_LEFT_ANGLE).replace('>', A_RIGHT_ANGLE)
+       
         if closerFound:  # closing tag spacing
             newContent += f"{make_tabs(stepsIn - stepsOut)}{line}\n"
         elif line[0] != '<':  # content line
