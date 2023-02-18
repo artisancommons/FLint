@@ -22,3 +22,5 @@
 - Following a Doc-Block Start:
 -  Add 'space-separated' styles
 - ex. //>> BlockName .view .container .etc 
+- Copy the sample styles.css next to docs.html
+- Sample includes styling for react-native projects

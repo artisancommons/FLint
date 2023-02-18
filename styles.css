@@ -1,0 +1,51 @@
+
+.body {
+    background-color: black;
+    color: antiquewhite;
+}
+
+.box {
+    display: block;
+    width: 80%;
+    text-align: center;
+    margin: auto;
+    margin-top: 14px;
+    margin-bottom: 14px;
+    padding: 10px;
+    border-radius: 10px;
+}
+
+.box-imports {
+    background-color: dodgerblue;
+    color: antiquewhite;
+}
+
+.box-screens {
+    background-color: bisque;
+    color:black;
+}
+
+.box-styles {
+    background-color: chocolate;
+    color: antiquewhite;
+}
+
+.project-result-body {
+    background-color: darkgray;
+    color: black;
+}
+
+.group-blob {
+    background-color: darkslategrey;
+    color: antiquewhite;
+}
+
+.group-blob-inner {
+    background-color: dimgray;
+    color: antiquewhite;
+}
+
+.default-block {
+    background-color: aliceblue;
+    color: black;
+}

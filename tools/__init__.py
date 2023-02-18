@@ -60,7 +60,7 @@ def parse_content(content):
             
             # no custom style found, using default
             if blockStyle == "":
-                resultGroups[blockName].append(f'<p class="default-block">\n' + result + "</p>\n")
+                resultGroups[blockName].append(f'<p class="box default-block">\n' + result + "</p>\n")
             
             else:  # if the block had (a) custom style(s)
                 # account for 1 or more styles
@@ -200,9 +200,9 @@ def lint_dir(targetRoot, lintIgnore, dirPath):
 
             # new group
             if group not in groupsAlreadyFound:
-                currentLintResult[group].insert(0, '<div class="group-blob">\n')
+                currentLintResult[group].insert(0, '<div class="box group-blob">\n')
             else:  # group found, use inner div
-                currentLintResult[group].insert(0, '<div class="group-blob-inner">\n')
+                currentLintResult[group].insert(0, '<div class="box group-blob-inner">\n')
             
             # add or assign group's list data
             if group in resultGroups:
@@ -240,6 +240,9 @@ class Linter():
         return result
 
 
+def make_html(content):
+    return f'<!DOCTYPE html>\n<html>\n<head>\n<link rel="stylesheet" href="styles.css">\n</head>\n<body>\n{content}\n</body>\n</html>\n'
+
 def make_pretty(content):
     newContent = ""
 
@@ -276,7 +279,7 @@ def make_pretty(content):
             newContent += f"{make_tabs((stepsIn - stepsOut) - 1)}{line}\n"
 
     # return wrapped formatted data
-    return f'\n<div class="project-result-body">\n\n{newContent}\n</div>\n'
+    return make_html(f'\n<div class="project-result-body">\n\n{newContent}\n</div>\n')
 
 def write_file(outputPath, data):
     with open(outputPath, 'w') as fd:

@@ -5,6 +5,7 @@
 node_modules
 assets
 docs
+docs.html
 flint.bat
 eas.json
 package-lock.json
