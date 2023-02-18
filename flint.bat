@@ -1,4 +1,5 @@
 REM TODO:
+REM PLEASE use forward slashes /  not backslash \
 REM replace input & output paths
 REM fill in the trailing path to flint.py
 
