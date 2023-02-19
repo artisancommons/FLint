@@ -109,6 +109,7 @@ def parse_content(content):
 
         # doc block accumulation
         if inBlock:
+            # escape html 'tags'
             result += line.replace('<', A_LEFT_ANGLE).replace('>', A_RIGHT_ANGLE)
     
     # groups of result data, based on blockName
@@ -242,10 +243,10 @@ class Linter():
         return result
 
 
-def make_html(content):
-    return f'<!DOCTYPE html>\n<html>\n<head>\n<link rel="stylesheet" href="styles.css">\n</head>\n<body>\n{content}\n</body>\n</html>\n'
+def make_html(subDir, content):
+    return f'<!DOCTYPE html>\n<html>\n<head>\n<link rel="stylesheet" href="{"../" if subDir else ""}styles.css">\n</head>\n<body>\n{content}\n</body>\n</html>\n'
 
-def make_pretty(content):
+def make_pretty(subDir, content):
     newContent = ""
 
     # local function for tab spacing
@@ -253,7 +254,11 @@ def make_pretty(content):
         tabs = list_to_string(['    ' for e in range(count)])
         return tabs
 
+    def make_home_link():
+        return make_link("./index", subDir) + '\n'
+
     contentLines = content.split('\n')
+    contentLines.insert(0, make_home_link())
 
     stepsIn, stepsOut = 1, 0
     closerFound = False
@@ -281,11 +286,12 @@ def make_pretty(content):
             newContent += f"{make_tabs((stepsIn - stepsOut) - 1)}{line}\n"
 
     # return wrapped formatted data
-    return make_html(f'\n<div class="project-result-body">\n\n{newContent}\n</div>\n')
+    return make_html(subDir, f'\n<div class="project-result-body">\n\n{newContent}\n</div>\n')
 
-def write_file(outputPath, data, linkpaths):
+def write_file(subDir, outputPath, data, linkpaths):
     print(f"using {linkpaths}")
     with open(outputPath, 'w') as fd:
+
         # handle merge flag
         if type(data) is dict:
             # start with previous page link
@@ -299,7 +305,7 @@ def write_file(outputPath, data, linkpaths):
             dump += linkpaths[1]
             
             # format all parsed content
-            dump = make_pretty(dump)
+            dump = make_pretty(subDir, dump)
             fd.write(dump)
         else:
             # write single file of all content
@@ -307,7 +313,7 @@ def write_file(outputPath, data, linkpaths):
             
             # wrap (previous page) file_content (next page) 
             content = f"\n{linkpaths[0]}\n{content}\n{linkpaths[1]}\n"
-            fd.write(make_pretty(content))
+            fd.write(make_pretty(subDir, content))
 
 
 # return path excluding last two segments  
@@ -332,21 +338,31 @@ def make_link(data, back=False):
     if not back:  # index.html
         r - 3
         dots = './'
+        ref = "page-link"
     else:         # root or nested pages
         dots = f"{list_to_string(['.' for i in range(0, r if r >= 0 else 0)])}/{'' if back else ''}"
-    
-    beg = f'<a href="{dots}{data}.html" >'
+        ref = "page-sub-link"
+
+    beg = f'<a class="{ref}" href="{dots}{data}.html" >'
     
     segs = data.split("/")[1:]
     string = list_to_string([s + " " for s in segs])
     
-    end = f'{string}</a>\n'
+    end = f'<h4 class="link-title">{string}</h4></a>\n'
     
     return beg + end 
 
 # make header of n size
 def make_title(group, n=6):
-    return f'<h{n}>{group}</h{n}>\n'
+    headerStyles = {
+        6: "tiny",
+        5: "small",
+        4: "normal",
+        3: "medium",
+        2: "large",
+        1: "max",
+    }
+    return f'<h{n} class="header-base header-{headerStyles[n]}">{group}</h{n}>\n'
 
 def make_index(outputPath, groups):
     # index page content
@@ -373,22 +389,39 @@ def make_index(outputPath, groups):
     def max_header_size(a, b):
         return b if b >= a else a
 
+    def make_list_begin():
+        return '<ul>\n'
+    def make_list_item(item):
+        return f'<li>{item}</li>\n'
+    def make_list_end():
+        return '</ul>\n'
+
     # track unique titles
     titlesMade = []
+    first = True
     for key in groups:
+        skey = key.split('/')[0]
         # make unqiue title
-        if key not in titlesMade:
-            inner += make_title(key, (max_header_size(7 - min_header_size(scalars[key.split('/')[0]], 4), 1)))
-            titlesMade.append(key)
+        if fix_path(key) not in titlesMade:
+            inner += make_title(fix_path(key), (max_header_size(7 - min_header_size(scalars[skey], 3), 1)))
+            titlesMade.append(fix_path(key))
+            
+            if first == False:
+                inner += make_list_end()
+            inner += make_list_begin()
+            first = False
+            
         
         # concatenate link tag
-        inner += (make_link(key))
+        inner += make_list_item(make_link(key))
+    inner += make_list_end()
+    inner += '<br>\n'
     
     # wrap content into html format
-    indexFile = make_html(inner)
+    indexFile = inner
     # write the index.html file
     with open(f"{outputPath}/index.html", 'w') as fd:
-        fd.writelines(indexFile)
+        fd.writelines(make_pretty(False, indexFile))
 
 
 def make_links_list(groups):
@@ -437,7 +470,7 @@ def do_lint(lintType, ioArgs, lintIgnore):
     # dump parsed contents into a single file 
     if doesMerge:
         force_make_dir(fix_path(outputPath))
-        write_file(f'{outputPath}.html', result, ["<br>", "<br>"])
+        write_file(False, f'{outputPath}.html', result, ["<br>", "<br>"])
 
     # dump parsed contents into files specified by block names
     else:
@@ -446,4 +479,4 @@ def do_lint(lintType, ioArgs, lintIgnore):
         for group in result:
             linkset = linksets[group]
             force_make_dir(fix_path(f'{outputPath}/{group}'))
-            write_file(f'{outputPath}/{group}.html', result[group], linkset)
+            write_file(True if len(outputPath.split('/')) > 2 else False, f'{outputPath}/{group}.html', result[group], linkset)

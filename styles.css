@@ -3,15 +3,14 @@
     background-color: black;
     color: antiquewhite;
 }
-
 .box {
     display: block;
     width: 80%;
     text-align: center;
     margin: auto;
-    margin-top: 14px;
-    margin-bottom: 14px;
-    padding: 10px;
+    margin-top: 1px;
+    margin-bottom: 1px;
+    padding: 1px;
     border-radius: 10px;
 }
 
@@ -33,19 +32,131 @@
 .project-result-body {
     background-color: darkgray;
     color: black;
+    width: 100%;
+    justify-content: center;
+    align-content: center;
+    margin: auto;
 }
 
 .group-blob {
     background-color: darkslategrey;
     color: antiquewhite;
+    width: 80%;
+    margin: auto;
+    padding: 10px;
 }
 
 .group-blob-inner {
     background-color: dimgray;
     color: antiquewhite;
+    width: 70%;
+    margin: auto;
+    padding: 10px;
 }
 
 .default-block {
     background-color: aliceblue;
     color: black;
+    padding: 10px;
+    margin: auto;
+    width: fit-content;
+}
+
+.link-title {
+    width: 12%;
+    min-width: max-content;
+    height: 6%;
+    font-size: large;
+    justify-content: center;
+    align-content: center;
+    text-align: center;
+    margin-left: 40%;
+    margin-right: 40%;
+    color: oldlace;
+    background-color: chocolate;
+}
+
+.page-link {
+    color: oldlace;
+    background-color: chocolate;
+}
+.page-link :hover {
+    color: blue;
+}
+.page-link :visited {
+    color: blueviolet;
+}
+
+.page-sub-link {
+    color: oldlace;
+    background-color: chocolate;
+}
+.page-sub-link :hover {
+    color: blue;
+}
+.page-sub-link :visited {
+    color: blueviolet;
+}
+
+.header-base {    
+    text-align: center;
+    justify-content: center;
+    align-content: center;
+}
+.header-tiny {
+    color: rgb(19, 19, 19);
+    font-size: x-large;
+    font-family:  'Arial Narrow Bold', sans-serif;
+    margin-left: -36%;
+    padding: 10px;
+    margin-right: 50%;
+}
+.header-small {
+    color: rgb(19, 19, 19);
+    
+    font-size: x-large;
+    font-family:  'Arial Narrow Bold', sans-serif;
+    margin-left: -36%;
+    padding: 10px;
+    margin-right: 50%;
+}
+.header-normal {
+    color:rgb(19, 19, 19);
+    
+    font-size: x-large;
+    font-family:  'Arial Narrow Bold', sans-serif;
+
+    margin-left: -36%;
+    padding: 10px;
+    margin-right: 50%;
+}
+.header-medium {
+    color: rgb(19, 19, 19);
+    
+    font-size: x-large;
+    font-family:  'Arial Narrow Bold', sans-serif;
+
+    margin-left: -36%;
+    padding: 10px;
+    margin-right: 50%;
+}
+.header-large {
+    color: rgb(19, 19, 19);
+    
+    font-size: x-large;
+    font-family: 'Arial Narrow Bold', sans-serif;
+
+    margin-left: -36%;
+    padding: 10px;
+    margin-right: 50%;
+}
+.header-max {
+    color: rgb(19, 19, 19);
+    
+    font-size: x-large;
+    font-family: 'Arial Narrow Bold', sans-serif;
+
+    margin-left: -36%;
+    padding: 10px;
+    margin-right: 50%;
 }
