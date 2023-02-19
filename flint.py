@@ -18,7 +18,7 @@ def main():
     lintType = evaluate_lint_type(cmd_args[1:])
     projectPath = cmd_args[2:][0]
     projectDir = projectPath.split('/')[-1]
-
+    print(projectPath)
     if not ignore_exists(f"{projectPath}/.flint-ignore"):
         print(" !-! please add a '.flint-ignore' to your project !-!\n")
         return

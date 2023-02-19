@@ -283,49 +283,167 @@ def make_pretty(content):
     # return wrapped formatted data
     return make_html(f'\n<div class="project-result-body">\n\n{newContent}\n</div>\n')
 
-def write_file(outputPath, data):
+def write_file(outputPath, data, linkpaths):
+    print(f"using {linkpaths}")
     with open(outputPath, 'w') as fd:
         # handle merge flag
         if type(data) is dict:
-            dump = ""
+            # start with previous page link
+            dump = f"{linkpaths[0]}"
+            
             # tally contents into single string
             for key in data:
                 dump += list_to_string(data[key])
+            
+            # end with next page link
+            dump += linkpaths[1]
+            
             # format all parsed content
             dump = make_pretty(dump)
             fd.write(dump)
         else:
             # write single file of all content
-            fd.write(make_pretty(list_to_string(data)))
+            content = list_to_string(data)
+            
+            # wrap (previous page) file_content (next page) 
+            content = f"\n{linkpaths[0]}\n{content}\n{linkpaths[1]}\n"
+            fd.write(make_pretty(content))
 
 
+# return path excluding last two segments  
 def fix_path(path):
     newPath = ""
+    # split path by /
     pathSplit = path.split('/')
     for i in pathSplit[:-1]:
         newPath += i + '/'
     return newPath[:-1]
 
+# try make dir
 def force_make_dir(path):
     if not dir_exists(path):
         mkdir(path)
+
+# make href link
+def make_link(data, back=False):
+    # calculate depth
+    r = len(data.split('/'))
+    
+    if not back:  # index.html
+        r - 3
+        dots = './'
+    else:         # root or nested pages
+        dots = f"{list_to_string(['.' for i in range(0, r if r >= 0 else 0)])}/{'' if back else ''}"
+    
+    beg = f'<a href="{dots}{data}.html" >'
+    
+    segs = data.split("/")[1:]
+    string = list_to_string([s + " " for s in segs])
+    
+    end = f'{string}</a>\n'
+    
+    return beg + end 
+
+# make header of n size
+def make_title(group, n=6):
+    return f'<h{n}>{group}</h{n}>\n'
+
+def make_index(outputPath, groups):
+    # index page content
+    inner = ""
+    
+    # map for header sizes (h1, h2, etc.)
+    scalars = {}
+    rootGroup = ""
+    for key in groups:
+        # split group name, use first path
+        rootGroup = key.split('/')[0]
+        
+        # initial header size
+        if rootGroup not in scalars:
+            scalars[rootGroup] = 1
+            continue
+
+        # increase header size
+        scalars[rootGroup] += 1
+
+    # min/max for header (1-6)
+    def min_header_size(a, b):
+        return a if a <= b else b
+    def max_header_size(a, b):
+        return b if b >= a else a
+
+    # track unique titles
+    titlesMade = []
+    for key in groups:
+        # make unqiue title
+        if key not in titlesMade:
+            inner += make_title(key, (max_header_size(7 - min_header_size(scalars[key.split('/')[0]], 4), 1)))
+            titlesMade.append(key)
+        
+        # concatenate link tag
+        inner += (make_link(key))
+    
+    # wrap content into html format
+    indexFile = make_html(inner)
+    # write the index.html file
+    with open(f"{outputPath}/index.html", 'w') as fd:
+        fd.writelines(indexFile)
+
+
+def make_links_list(groups):
+    # turn dict_keys into list
+    rkeys = [key for key in groups]
+    
+    # set wrap bounds
+    mod = len(rkeys)-1
+    
+    # link set cache
+    linkset = ['', '']
+    
+    # href link nodes (previous page -> next page)
+    # based on group names
+    linksets = {}
+    
+    for i in range(0, len(rkeys)):
+        # handle index wrapping
+        f1 = ((i + 1) % mod)
+        f2 = ((i + 2) % mod)
+
+        # assign links
+        linkset[0] = make_link(rkeys[f1], True)
+        linkset[1] = make_link(rkeys[f2], True)
+
+        # copy set into group map
+        linksets[rkeys[i]] = linkset.copy()
+
+    return linksets
+
 
 # main entry
 def do_lint(lintType, ioArgs, lintIgnore):
     # create linter instance and run lint method
     linter = Linter(ioArgs, lintIgnore)
     result = linter.lint(lintType)
-
+    
     outputPath = ioArgs[1]
+    
+    groups = result.keys()
+    
+    # create index.html from groups
+    make_index(outputPath, groups)
 
     doesMerge = lintType == LINT_TYPE_MDIR
     # dump parsed contents into a single file 
     if doesMerge:
         force_make_dir(fix_path(outputPath))
-        write_file(f'{outputPath}.html', result)
+        write_file(f'{outputPath}.html', result, ["<br>", "<br>"])
 
     # dump parsed contents into files specified by block names
     else:
+        linksets = make_links_list(groups)
+
         for group in result:
+            linkset = linksets[group]
             force_make_dir(fix_path(f'{outputPath}/{group}'))
-            write_file(f'{outputPath}/{group}.html', result[group])
+            write_file(f'{outputPath}/{group}.html', result[group], linkset)
